@@ -14,7 +14,9 @@ Future request(url, {formData}) async {
     } else {
       response = await dio.post(servicePath[url], data: formData);
     }
+    print("网页状态返回 + ${response.statusCode}");
     if (response.statusCode == 200) {
+      print(response.data);
       return response.data;
     } else {
       throw Exception('后端接口出现异常，请检测代码和服务器情况.........');
