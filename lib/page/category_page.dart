@@ -76,9 +76,9 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
         list = category.data;
       });
       Provide.value<ChildCategory>(context)
-          .getChildCategory(list[0].bxMallSubDto, list[0].mallCategoryId); // TODO
+          .getChildCategory(list[0].bxMallSubDto, '4'); // TODO list[0].mallCategoryId
 
-      print(list[0].bxMallSubDto);
+      //print(list[0].bxMallSubDto);
       list[0].bxMallSubDto.forEach((item) => print(item.mallSubName));
     });
   }
@@ -115,7 +115,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
   }
 
   void _getGoodList({String categoryId}) async {
-    print(3);
+    //print(3);
     //print("categoryId == $categoryId");
     var data = {
       'categoryId': categoryId == null ? '4' : categoryId,
@@ -140,7 +140,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
     //print(4);
     //print("左边");
     //_getGoodList();
-
+    //print("啊啊啊" + list.length.toString());
     return Container(
       width: ScreenUtil().setWidth(150),
       decoration: BoxDecoration(

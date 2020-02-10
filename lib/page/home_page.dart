@@ -7,7 +7,8 @@ import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-
+import '../routers/application.dart';
+import 'details_page/details_top_area.dart';
 
 // 火爆专区
 int page = 1;
@@ -132,8 +133,12 @@ class SwiperDiy extends StatelessWidget {
       width: ScreenUtil().setWidth(750),
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
-          return Image.network("${swiperDataList[index]['image']}",
-              fit: BoxFit.fill);
+          return InkWell(
+              onTap: () {
+                Application.router.navigateTo(context,"/detail?id=${swiperDataList[index]['goodsId']}");
+              },
+              child: Image.network("${swiperDataList[index]['image']}",
+                  fit: BoxFit.fill));
         },
         itemCount: swiperDataList.length,
         pagination: new SwiperPagination(),
@@ -175,7 +180,7 @@ class TopNavigator extends StatelessWidget {
       height: ScreenUtil().setHeight(350),
       padding: EdgeInsets.all(3.0),
       child: GridView.count(
-        physics: new NeverScrollableScrollPhysics(),  // 固定
+        physics: new NeverScrollableScrollPhysics(), // 固定
         crossAxisCount: 4,
         padding: EdgeInsets.all(5.0),
         children: navigatorList.map((item) {
@@ -250,9 +255,11 @@ class Recomend extends StatelessWidget {
     );
   }
 
-  Widget _item(index) {
+  Widget _item(index, context) {
     return InkWell(
-        onTap: () {},
+        onTap: () {
+          Application.router.navigateTo(context,"/detail?id=${recommendList[index]['goodsId']}");
+        },
         child: Container(
           height: ScreenUtil().setHeight(330),
           width: ScreenUtil().setWidth(250),
@@ -286,7 +293,7 @@ class Recomend extends StatelessWidget {
       child: ListView.builder(
         itemCount: recommendList.length,
         itemBuilder: (context, index) {
-          return _item(index);
+          return _item(index, context);
         },
         scrollDirection: Axis.horizontal,
       ),
@@ -330,35 +337,36 @@ class FloorContent extends StatelessWidget {
 
   FloorContent({Key key, this.floorGoodsList}) : super(key: key);
 
-  Widget _firstRow() {
+  Widget _firstRow(context) {
     return Row(
       children: <Widget>[
-        _goodsItem(floorGoodsList[0]),
+        _goodsItem(floorGoodsList[0], context),
         Column(
           children: <Widget>[
-            _goodsItem(floorGoodsList[1]),
-            _goodsItem(floorGoodsList[2]),
+            _goodsItem(floorGoodsList[1], context),
+            _goodsItem(floorGoodsList[2], context),
           ],
         )
       ],
     );
   }
 
-  Widget _otherGoods() {
+  Widget _otherGoods(context) {
     return Row(
       children: <Widget>[
-        _goodsItem(floorGoodsList[3]),
-        _goodsItem(floorGoodsList[4]),
+        _goodsItem(floorGoodsList[3], context),
+        _goodsItem(floorGoodsList[4], context),
       ],
     );
   }
 
-  Widget _goodsItem(Map goods) {
+  Widget _goodsItem(Map goods, context) {
     return Container(
       width: ScreenUtil().setWidth(375),
       child: InkWell(
         onTap: () {
-          print("点击了楼层商品");
+          //print("点击了楼层商品");
+          Application.router.navigateTo(context, "/detail?id=${goods['goodsId']}");
         },
         child: Image.network(goods['image']),
       ),
@@ -421,7 +429,9 @@ class _HotGoodsState extends State<HotGoods> {
       List<Widget> listWidget = hotGoodsList.map((val) {
         return InkWell(
           onTap: () {
-            print("点击了火爆商品");
+            //print("点击了火爆商品");
+            Application.router
+                .navigateTo(context, "/detail?id=${val['goodsId']}");
           },
           child: Container(
             width: ScreenUtil().setWidth(372),
@@ -494,33 +504,55 @@ class MaterialFooter extends Footer {
 
   final LinkFooterNotifier linkNotifier = LinkFooterNotifier();
 
-  MaterialFooter({this.key,
+  MaterialFooter({
+    this.key,
     this.displacement = 40.0,
     this.valueColor,
     this.backgroundColor,
     completeDuration = const Duration(seconds: 1),
     bool enableHapticFeedback = false,
     bool enableInfiniteLoad = true,
-  }): super(
-    float: true,
-    extent: 52.0,
-    triggerDistance: 52.0,
-    completeDuration: completeDuration == null
-        ? Duration(milliseconds: 300,)
-        : completeDuration + Duration(milliseconds: 300,),
-    enableHapticFeedback: enableHapticFeedback,
-    enableInfiniteLoad: enableInfiniteLoad,
-  );
+  }) : super(
+          float: true,
+          extent: 52.0,
+          triggerDistance: 52.0,
+          completeDuration: completeDuration == null
+              ? Duration(
+                  milliseconds: 300,
+                )
+              : completeDuration +
+                  Duration(
+                    milliseconds: 300,
+                  ),
+          enableHapticFeedback: enableHapticFeedback,
+          enableInfiniteLoad: enableInfiniteLoad,
+        );
 
   @override
-  Widget contentBuilder(BuildContext context, LoadMode loadState,
-      double pulledExtent, double loadTriggerPullDistance,
-      double loadIndicatorExtent, AxisDirection axisDirection,
-      bool float, Duration completeDuration, bool enableInfiniteLoad,
-      bool success, bool noMore) {
-    linkNotifier.contentBuilder(context, loadState, pulledExtent,
-        loadTriggerPullDistance, loadIndicatorExtent, axisDirection, float,
-        completeDuration, enableInfiniteLoad, success, noMore);
+  Widget contentBuilder(
+      BuildContext context,
+      LoadMode loadState,
+      double pulledExtent,
+      double loadTriggerPullDistance,
+      double loadIndicatorExtent,
+      AxisDirection axisDirection,
+      bool float,
+      Duration completeDuration,
+      bool enableInfiniteLoad,
+      bool success,
+      bool noMore) {
+    linkNotifier.contentBuilder(
+        context,
+        loadState,
+        pulledExtent,
+        loadTriggerPullDistance,
+        loadIndicatorExtent,
+        axisDirection,
+        float,
+        completeDuration,
+        enableInfiniteLoad,
+        success,
+        noMore);
     return MaterialFooterWidget(
       key: key,
       displacement: displacement,
@@ -546,26 +578,47 @@ class MaterialHeader extends Header {
     this.backgroundColor,
     completeDuration = const Duration(seconds: 1),
     bool enableHapticFeedback = false,
-  }): super(
-    float: true,
-    extent: 70.0,
-    triggerDistance: 70.0,
-    completeDuration: completeDuration == null
-        ? Duration(milliseconds: 300,)
-        : completeDuration + Duration(milliseconds: 300,),
-    enableInfiniteRefresh: false,
-    enableHapticFeedback: enableHapticFeedback,
-  );
+  }) : super(
+          float: true,
+          extent: 70.0,
+          triggerDistance: 70.0,
+          completeDuration: completeDuration == null
+              ? Duration(
+                  milliseconds: 300,
+                )
+              : completeDuration +
+                  Duration(
+                    milliseconds: 300,
+                  ),
+          enableInfiniteRefresh: false,
+          enableHapticFeedback: enableHapticFeedback,
+        );
 
   @override
-  Widget contentBuilder(BuildContext context, RefreshMode refreshState,
-      double pulledExtent, double refreshTriggerPullDistance,
-      double refreshIndicatorExtent, AxisDirection axisDirection,
-      bool float, Duration completeDuration, bool enableInfiniteRefresh,
-      bool success, bool noMore) {
-    linkNotifier.contentBuilder(context, refreshState, pulledExtent,
-        refreshTriggerPullDistance, refreshIndicatorExtent, axisDirection,
-        float, completeDuration, enableInfiniteRefresh, success, noMore);
+  Widget contentBuilder(
+      BuildContext context,
+      RefreshMode refreshState,
+      double pulledExtent,
+      double refreshTriggerPullDistance,
+      double refreshIndicatorExtent,
+      AxisDirection axisDirection,
+      bool float,
+      Duration completeDuration,
+      bool enableInfiniteRefresh,
+      bool success,
+      bool noMore) {
+    linkNotifier.contentBuilder(
+        context,
+        refreshState,
+        pulledExtent,
+        refreshTriggerPullDistance,
+        refreshIndicatorExtent,
+        axisDirection,
+        float,
+        completeDuration,
+        enableInfiniteRefresh,
+        success,
+        noMore);
     return MaterialHeaderWidget(
       key: key,
       displacement: displacement,
